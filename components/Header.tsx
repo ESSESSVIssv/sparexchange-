@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'motion/react';
+import { Store, ShoppingCart, Heart, MessageSquare, Package, Plus } from 'lucide-react';
 
 interface HeaderProps {
     onSellClick: () => void;
@@ -13,108 +15,110 @@ interface HeaderProps {
     onNavigateHome: () => void;
 }
 
-const StoreIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-  </svg>
-);
-
-const CartIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-    </svg>
-);
-
-const ChatIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-    </svg>
-);
-
-const WishlistIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-    </svg>
-);
-
-const OrdersIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-    </svg>
-);
-
-
-export const Header: React.FC<HeaderProps> = ({ onSellClick, cartItemCount, onCartClick, wishlistItemCount, onWishlistClick, role, onChatClick, chatCount, onOrdersClick, onNavigateHome }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+    onSellClick, 
+    cartItemCount, 
+    onCartClick, 
+    wishlistItemCount, 
+    onWishlistClick, 
+    role, 
+    onChatClick, 
+    chatCount, 
+    onOrdersClick, 
+    onNavigateHome 
+}) => {
     return (
-        <header className="bg-white shadow-md sticky top-0 z-20">
-            <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
+        <motion.header 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            className="sticky top-0 z-50 px-4 py-4 md:px-8"
+        >
+            <div className="container mx-auto glass-panel rounded-2xl px-6 py-4 flex justify-between items-center shadow-2xl">
                 <div 
-                    className="flex items-center space-x-3 cursor-pointer"
+                    className="flex items-center space-x-3 cursor-pointer group"
                     onClick={onNavigateHome}
                 >
-                    <StoreIcon />
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
+                    <motion.div 
+                        whileHover={{ rotate: 15 }}
+                        className="bg-brand-primary/20 p-2 rounded-xl text-brand-primary"
+                        style={{ color: 'var(--color-brand-primary)', backgroundColor: 'rgba(255, 107, 0, 0.1)' }}
+                    >
+                        <Store size={28} />
+                    </motion.div>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gradient font-display">
                         SpareXchange
-                        {role === 'seller' && <span className="text-base font-medium text-indigo-600 ml-2">Seller Dashboard</span>}
+                        {role === 'seller' && <span className="text-sm font-medium text-brand-primary ml-3" style={{ color: 'var(--color-brand-primary)' }}>Seller Dashboard</span>}
                     </h1>
                 </div>
                 <div className="flex items-center space-x-2 sm:space-x-4">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={onChatClick}
-                        className="relative text-slate-600 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-slate-100"
+                        className="relative text-text-secondary hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                         aria-label={`View chats with ${chatCount} conversations`}
                     >
-                        <ChatIcon />
+                        <MessageSquare size={24} />
                         {chatCount > 0 && (
-                            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2">
+                            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4" style={{ backgroundColor: 'var(--color-brand-primary)' }}>
                                 {chatCount}
                             </span>
                         )}
-                    </button>
+                    </motion.button>
                    {role === 'buyer' && (
                        <>
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={onOrdersClick}
-                            className="relative text-slate-600 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-slate-100"
+                            className="relative text-text-secondary hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                             aria-label="View your orders"
                         >
-                            <OrdersIcon />
-                        </button>
-                        <button
+                            <Package size={24} />
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={onWishlistClick}
-                            className="relative text-slate-600 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-slate-100"
+                            className="relative text-text-secondary hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                             aria-label={`View wishlist with ${wishlistItemCount} items`}
                         >
-                            <WishlistIcon />
+                            <Heart size={24} />
                             {wishlistItemCount > 0 && (
-                                <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-pink-600 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2">
+                                <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4" style={{ backgroundColor: 'var(--color-brand-primary)' }}>
                                     {wishlistItemCount}
                                 </span>
                             )}
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={onCartClick}
-                            className="relative text-slate-600 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-slate-100"
+                            className="relative text-text-secondary hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                             aria-label={`View cart with ${cartItemCount} items`}
                         >
-                            <CartIcon />
+                            <ShoppingCart size={24} />
                             {cartItemCount > 0 && (
-                                <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2">
+                                <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-[10px] font-bold text-white transform translate-x-1/4 -translate-y-1/4" style={{ backgroundColor: 'var(--color-brand-primary)' }}>
                                     {cartItemCount}
                                 </span>
                             )}
-                        </button>
+                        </motion.button>
                        </>
                     )}
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={onSellClick}
-                        className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition-transform transform hover:scale-105"
+                        className="bg-brand-primary text-white font-semibold px-5 py-2.5 rounded-full shadow-lg transition-all glow-orange flex items-center gap-2"
+                        style={{ backgroundColor: 'var(--color-brand-primary)' }}
                     >
+                        <Plus size={18} />
                         <span className="hidden sm:inline">{role === 'buyer' ? 'Sell Your Item' : 'Add New Item'}</span>
-                        <span className="sm:hidden">+</span>
-                    </button>
+                    </motion.button>
                 </div>
             </div>
-        </header>
+        </motion.header>
     );
 };

@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'motion/react';
+import { Search, ChevronDown, Filter } from 'lucide-react';
 import { Condition, Currency, CURRENCIES } from '../types';
 
 interface FilterBarProps {
@@ -10,57 +12,65 @@ interface FilterBarProps {
     onDisplayCurrencyChange: (currency: Currency) => void;
 }
 
-const SearchIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-);
-
 export const FilterBar: React.FC<FilterBarProps> = ({ searchTerm, onSearchTermChange, conditionFilter, onConditionFilterChange, displayCurrency, onDisplayCurrencyChange }) => {
     const conditions: (Condition | 'all')[] = ['all', Condition.NEW, Condition.USED];
     
     return (
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-8 flex flex-col md:flex-row items-center gap-4">
-            <div className="relative w-full md:flex-grow">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <SearchIcon />
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-panel p-4 rounded-2xl shadow-lg mb-8 flex flex-col md:flex-row items-center gap-4"
+        >
+            <div className="relative w-full md:flex-grow focus-within:text-brand-primary">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted transition-colors">
+                    <Search size={18} />
                 </div>
                 <input
                     type="text"
-                    placeholder="Search for products..."
+                    placeholder="Search premium parts..."
                     value={searchTerm}
                     onChange={(e) => onSearchTermChange(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition bg-white text-slate-900"
+                    className="w-full pl-11 pr-4 py-3 border border-white/10 rounded-xl focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition bg-bg-dark text-white placeholder-text-muted outline-none"
+                    style={{ '--tw-ring-color': 'var(--color-brand-primary)', '--tw-border-opacity': 1 } as React.CSSProperties}
                 />
             </div>
-            <div className="flex items-center space-x-2 w-full md:w-auto">
-                <span className="font-semibold text-slate-600">Condition:</span>
-                <div className="flex bg-slate-100 p-1 rounded-md">
-                    {conditions.map(condition => (
-                        <button
-                            key={condition}
-                            onClick={() => onConditionFilterChange(condition)}
-                            className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
-                                conditionFilter === condition 
-                                    ? 'bg-indigo-600 text-white shadow' 
-                                    : 'text-slate-700 hover:bg-slate-200'
-                            }`}
-                        >
-                            {condition.charAt(0).toUpperCase() + condition.slice(1)}
-                        </button>
-                    ))}
+            
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+                <div className="flex items-center space-x-2 bg-bg-dark p-1.5 rounded-xl border border-white/5">
+                    <div className="pl-2 pr-1 text-text-muted">
+                        <Filter size={16} />
+                    </div>
+                    <div className="flex">
+                        {conditions.map(condition => (
+                            <button
+                                key={condition}
+                                onClick={() => onConditionFilterChange(condition)}
+                                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                                    conditionFilter === condition 
+                                        ? 'bg-white/10 text-white shadow-sm' 
+                                        : 'text-text-secondary hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                {condition.charAt(0).toUpperCase() + condition.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                
+                <div className="relative flex items-center">
+                    <select
+                        value={displayCurrency}
+                        onChange={(e) => onDisplayCurrencyChange(e.target.value as Currency)}
+                        className="appearance-none border border-white/10 rounded-xl py-3 pl-4 pr-10 focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition bg-bg-dark text-white outline-none w-full sm:w-auto font-semibold cursor-pointer"
+                        style={{ '--tw-ring-color': 'var(--color-brand-primary)', '--tw-border-opacity': 1 } as React.CSSProperties}
+                    >
+                        {CURRENCIES.map(c => <option key={c} value={c} className="bg-bg-dark text-white">{c}</option>)}
+                    </select>
+                    <div className="absolute right-3 pointer-events-none text-text-muted">
+                        <ChevronDown size={16} />
+                    </div>
                 </div>
             </div>
-            <div className="flex items-center space-x-2 w-full md:w-auto">
-                <span className="font-semibold text-slate-600">Currency:</span>
-                <select
-                    value={displayCurrency}
-                    onChange={(e) => onDisplayCurrencyChange(e.target.value as Currency)}
-                    className="border border-slate-300 rounded-md py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 transition bg-white text-slate-900"
-                >
-                    {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-            </div>
-        </div>
+        </motion.div>
     );
 };

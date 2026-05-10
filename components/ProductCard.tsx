@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'motion/react';
+import { ShieldCheck, ArrowRight, Tags } from 'lucide-react';
 import { Product, Condition, Currency, convertCurrency } from '../types';
 import { StarRating } from './StarRating';
 
@@ -20,10 +22,15 @@ const formatCurrency = (price: number, currency: string) => {
     }
 };
 
+const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95, y: 15 },
+    show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+};
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewItem, displayCurrency }) => {
     const conditionBadgeClass = product.condition === Condition.NEW
-        ? 'bg-emerald-500 text-white'
-        : 'bg-amber-500 text-white';
+        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+        : 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
 
     const reviews = product.reviews || [];
     const averageRating = reviews.length > 0
@@ -31,16 +38,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewItem, d
         : 0;
         
     const convertedPrice = convertCurrency(product.price, product.currency, displayCurrency);
-
     const isVerified = product.imageUrl.includes('unsplash.com');
 
     return (
-        <div 
-            className="group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer"
+        <motion.div 
+            variants={itemVariants}
+            whileHover={{ y: -5 }}
+            className="group glass-panel rounded-2xl overflow-hidden cursor-pointer flex flex-col h-full hover:shadow-[0_0_30px_rgba(255,107,0,0.1)] transition-all duration-300 relative border border-white/5 hover:border-brand-primary/30"
             onClick={() => onViewItem(product)}
+            style={{ '--color-brand-primary': '#FF6B00' } as React.CSSProperties}
         >
-            <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                <img 
+            <div className="relative aspect-[4/3] overflow-hidden bg-bg-darker">
+                {/* Image */}
+                <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4 }}
                     src={product.imageUrl} 
                     alt={product.name}
                     referrerPolicy="no-referrer"
@@ -48,55 +60,60 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewItem, d
                         const target = e.target as HTMLImageElement;
                         target.src = `https://picsum.photos/seed/${product.id}/400/300`;
                     }}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover"
                 />
-                <div className="absolute top-3 left-3 flex flex-col gap-2">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm ${conditionBadgeClass}`}>
+                
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-darkos/80 via-transparent to-transparent opacity-60 pointer-events-none" />
+
+                <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md ${conditionBadgeClass}`}>
                         {product.condition}
                     </span>
                     {isVerified && (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm bg-indigo-600 text-white flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.64.304 1.24.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            Verified
-                        </span>
+                        <div className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-brand-primary/20 text-brand-primary border border-brand-primary/30 backdrop-blur-md flex items-center gap-1.5 shadow-[0_0_10px_rgba(255,107,0,0.2)]" style={{ color: 'var(--color-brand-primary)' }}>
+                            <ShieldCheck size={12} />
+                            AI Verified
+                        </div>
                     )}
                 </div>
-                <div className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-sm text-[8px] font-bold px-1.5 py-0.5 rounded border border-slate-200 text-slate-500 uppercase tracking-tighter z-10">
+                
+                <div className="absolute bottom-2 right-2 bg-white/10 backdrop-blur-md text-[10px] font-semibold px-2 py-1 rounded-md border border-white/10 text-white/80 uppercase flex items-center gap-1 z-10">
+                    <Tags size={10} />
                     Genuine Part
                 </div>
             </div>
             
-            <div className="p-4 flex flex-col flex-grow">
+            <div className="p-5 flex flex-col flex-grow bg-bg-dark/50">
                 <div className="flex-grow">
-                    <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors mb-1">
+                    <h3 className="text-base font-semibold text-white line-clamp-2 group-hover:text-brand-primary transition-colors mb-1.5 font-display" style={{ '--tw-text-opacity': 1, color: 'inherit' }}>
                         {product.name}
                     </h3>
-                    <p className="text-[10px] text-slate-400 font-mono mb-2">
+                    <p className="text-[11px] text-text-muted font-mono mb-3 tracking-wider uppercase">
                         {product.description.includes('SKU: ') ? `SKU: ${product.description.split('SKU: ')[1]}` : `SKU: PART-${product.id}`}
                     </p>
-                    <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1.5 mb-2">
                         <StarRating rating={averageRating} size="sm" />
-                        <span className="text-[10px] text-slate-400 font-medium">({reviews.length})</span>
+                        <span className="text-[11px] text-text-muted font-medium">({reviews.length} reviews)</span>
                     </div>
                 </div>
                 
-                <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
+                <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
                     <div>
-                        <p className="text-xs text-slate-500 font-medium mb-0.5">Price</p>
-                        <p className="text-lg font-bold text-slate-900">
+                        <p className="text-[10px] text-text-muted font-medium mb-0.5 uppercase tracking-widest">Price</p>
+                        <p className="text-xl font-bold text-white font-display">
                             {formatCurrency(convertedPrice, displayCurrency)}
                         </p>
                     </div>
-                    <div className="p-2 bg-slate-900 text-white rounded-lg group-hover:bg-indigo-600 transition-all duration-200 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </div>
+                    <motion.div 
+                        whileHover={{ scale: 1.1, rotate: -15 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:-rotate-45 transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0)] group-hover:shadow-[0_0_15px_rgba(255,107,0,0.4)]"
+                    >
+                        <ArrowRight size={18} />
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };

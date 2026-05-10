@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Sparkles, ShieldCheck } from 'lucide-react';
 import { Header } from './components/Header';
 import { ProductList } from './components/ProductList';
 import { SellModal } from './components/SellModal';
@@ -601,7 +603,42 @@ const App: React.FC = () => {
         switch (currentPage) {
             case 'marketplace':
                 return (
-                    <main className="container mx-auto p-4 md:p-8">
+                    <motion.main 
+                        key="marketplace"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="container mx-auto p-4 md:p-8"
+                    >
+                        {role === 'buyer' && (
+                            <div className="mb-8 relative overflow-hidden rounded-2xl p-6 md:p-8 bg-gradient-to-r from-bg-darker to-bg-dark border border-white/5 shadow-xl glass-panel flex flex-col lg:flex-row items-center justify-between gap-8">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary opacity-20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" style={{ backgroundColor: 'var(--color-brand-primary)' }}></div>
+                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+                                
+                                <div className="relative z-10 w-full lg:w-1/2">
+                                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: 'var(--color-brand-primary)' }}>
+                                        <ShieldCheck size={12} />
+                                        <span>AI-Verified Marketplace</span>
+                                    </div>
+                                    <h1 className="text-2xl md:text-3xl font-display font-bold text-white mb-2 leading-tight">
+                                        Genuine Automotive & Racing Parts
+                                    </h1>
+                                    <p className="text-sm md:text-base text-text-secondary max-w-lg">
+                                        Shop authenticated premium components from strictly vetted global dealers.
+                                    </p>
+                                </div>
+                                
+                                <div className="relative z-10 w-full lg:w-1/2 flex flex-wrap gap-2 justify-start lg:justify-end">
+                                    {['Engine & Drivetrain', 'Suspension & Steering', 'Exhaust Systems', 'Brakes & Rotors', 'Exterior Body', 'Wheels & Tires'].map((cat) => (
+                                        <button key={cat} onClick={() => setSearchTerm(cat.split(' ')[0])} className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-primary/40 transition-all text-sm font-semibold text-white/90 group whitespace-nowrap">
+                                            <span className="group-hover:text-brand-primary transition-colors">{cat}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {role === 'buyer' ? (
                             <>
                                 <FilterBar
@@ -626,19 +663,31 @@ const App: React.FC = () => {
                                 onDeleteItem={handleDeleteProduct}
                             />
                         )}
-                    </main>
+                    </motion.main>
                 );
             case 'orders':
-                return <OrdersPage orders={orders} onConfirmDelivery={handleConfirmDelivery} />;
+                return (
+                    <motion.div key="orders" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <OrdersPage orders={orders} onConfirmDelivery={handleConfirmDelivery} />
+                    </motion.div>
+                );
             case 'shipping':
-                return <ShippingPage cartItems={cartItems} onConfirmShipping={handleConfirmShipping} />;
+                return (
+                    <motion.div key="shipping" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <ShippingPage cartItems={cartItems} onConfirmShipping={handleConfirmShipping} />
+                    </motion.div>
+                );
             default:
                 return null;
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-100">
+        <div className="min-h-screen relative text-text-primary overflow-x-hidden font-sans pb-20">
+            {/* Base ambient background colors */}
+            <div className="fixed inset-0 pointer-events-none bg-bg-darker -z-20"></div>
+            <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent -z-10"></div>
+            
             <Header
                 onSellClick={() => setIsSellModalOpen(true)}
                 cartItemCount={cartItems.length}
@@ -652,7 +701,9 @@ const App: React.FC = () => {
                 onNavigateHome={() => setCurrentPage('marketplace')}
             />
             
-            {renderPage()}
+            <AnimatePresence mode="wait">
+                {renderPage()}
+            </AnimatePresence>
 
             {isSellModalOpen && (
                 <SellModal
@@ -720,11 +771,13 @@ const App: React.FC = () => {
             )}
 
             {/* Toast Container */}
-            <div aria-live="assertive" className="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start z-[100]">
-                <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
-                    {toasts.map(toast => (
-                        <Toast key={toast.id} toast={toast} onClose={removeToast} />
-                    ))}
+            <div aria-live="assertive" className="fixed bottom-0 right-0 flex flex-col items-end px-4 py-6 pointer-events-none sm:p-6 z-[100]">
+                <div className="w-full flex flex-col space-y-4 items-center sm:items-end">
+                    <AnimatePresence>
+                        {toasts.map(toast => (
+                            <Toast key={toast.id} toast={toast} onClose={removeToast} />
+                        ))}
+                    </AnimatePresence>
                 </div>
             </div>
         </div>
