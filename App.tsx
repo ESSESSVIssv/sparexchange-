@@ -237,14 +237,14 @@ const generateProducts = () => {
     };
 
     // Generate 100+ Car Parts
-    for (let i = 0; i < 110; i++) {
+    for (let i = 0; i < 150; i++) {
         const brand = CAR_BRANDS[i % CAR_BRANDS.length];
         const part = CAR_PARTS[i % CAR_PARTS.length];
         const imageUrl = getKeywords('car', part, 'main');
         products.push({
             id: id++,
             name: `${brand} ${part}`,
-            description: `High-quality ${part} for ${brand} vehicles. Durable and reliable performance. This genuine ${brand} part ensures perfect fitment and long-lasting durability for your vehicle. SKU: ${brand.substring(0,3).toUpperCase()}-${part.substring(0,3).toUpperCase()}-${id}`,
+            description: `High-quality ${part} for ${brand} vehicles. Durable and reliable performance. This genuine ${brand} part ensures perfect fitment and long-lasting durability for your high-performance vehicle. SKU: ${brand.substring(0,3).toUpperCase()}-${part.substring(0,3).toUpperCase()}-${id}`,
             price: Math.floor(Math.random() * 2000) + 50,
             condition: Math.random() > 0.5 ? Condition.NEW : Condition.USED,
             imageUrl,
@@ -257,19 +257,20 @@ const generateProducts = () => {
             sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
             sellerPhoneNumber: generateRandomPhoneNumber(),
             sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
-            reviews: generateFakeReviews()
+            reviews: generateFakeReviews(),
+            isVerified: true
         });
     }
 
-    // Generate 100+ Motorcycle Parts
-    for (let i = 0; i < 110; i++) {
+    // Generate 100+ Motorcycle Actions/Parts
+    for (let i = 0; i < 100; i++) {
         const brand = MOTO_BRANDS[i % MOTO_BRANDS.length];
         const part = MOTO_PARTS[i % MOTO_PARTS.length];
         const imageUrl = getKeywords('motorcycle', part, 'main');
         products.push({
             id: id++,
             name: `${brand} ${part}`,
-            description: `Premium ${part} for ${brand} motorcycles. Enhances style and performance. Designed specifically for ${brand} models to provide superior handling and aesthetics. SKU: ${brand.substring(0,3).toUpperCase()}-${part.substring(0,3).toUpperCase()}-${id}`,
+            description: `Premium ${part} for ${brand} motorcycles. Enhances style and performance. Designed specifically for ${brand} track and road models to provide superior handling and aesthetics. SKU: ${brand.substring(0,3).toUpperCase()}-${part.substring(0,3).toUpperCase()}-${id}`,
             price: Math.floor(Math.random() * 1500) + 30,
             condition: Math.random() > 0.5 ? Condition.NEW : Condition.USED,
             imageUrl,
@@ -282,32 +283,8 @@ const generateProducts = () => {
             sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
             sellerPhoneNumber: generateRandomPhoneNumber(),
             sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
-            reviews: generateFakeReviews()
-        });
-    }
-
-    // Generate 100+ Bicycle Parts
-    for (let i = 0; i < 110; i++) {
-        const brand = BIKE_BRANDS[i % BIKE_BRANDS.length];
-        const part = BIKE_PARTS[i % BIKE_PARTS.length];
-        const imageUrl = getKeywords('bicycle', part, 'main');
-        products.push({
-            id: id++,
-            name: `${brand} ${part}`,
-            description: `Lightweight and durable ${part} for ${brand} bicycles. Professional grade. This ${brand} component is engineered for precision shifting and maximum power transfer. SKU: ${brand.substring(0,3).toUpperCase()}-${part.substring(0,3).toUpperCase()}-${id}`,
-            price: Math.floor(Math.random() * 3000) + 20,
-            condition: Math.random() > 0.5 ? Condition.NEW : Condition.USED,
-            imageUrl,
-            additionalImages: [
-                getKeywords('bicycle', part, 'detail'),
-                getKeywords('bicycle', part, 'side'),
-                getKeywords('bicycle', part, 'macro')
-            ],
-            currency: 'USD',
-            sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
-            sellerPhoneNumber: generateRandomPhoneNumber(),
-            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
-            reviews: generateFakeReviews()
+            reviews: generateFakeReviews(),
+            isVerified: Math.random() > 0.2 // 80% chance of being verified
         });
     }
 
