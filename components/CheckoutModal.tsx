@@ -1,6 +1,6 @@
 import React, { useState, useMemo, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle2, ShieldCheck, X } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, X, Banknote, QrCode, KeyRound } from 'lucide-react';
 import { Product, Currency, convertCurrency } from '../types';
 
 interface CheckoutModalProps {
@@ -21,7 +21,10 @@ const formatCurrency = (price: number, currency: string) => {
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, cartItems, onConfirmOrder, displayCurrency }) => {
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'app_deposit' | 'cod'>('cod');
+    
     const orderId = useMemo(() => `SX-${Math.random().toString(36).substr(2, 9).toUpperCase()}`, [isOpen]); // Re-generate on open
+    const deliveryOtp = useMemo(() => Math.floor(100000 + Math.random() * 900000), [isOpen]); // 6-digit OTP
 
     const totalInDisplayCurrency = useMemo(() => {
         return cartItems.reduce((acc, item) => {
@@ -74,23 +77,33 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, c
                             animate={{ scale: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
                         >
-                            <CheckCircle2 size={80} className="text-emerald-500 mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
+                            <CheckCircle2 size={80} className="text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
                         </motion.div>
                         <h2 className="text-3xl font-bold text-white mb-2 font-display">Order Confirmed!</h2>
                         <p className="text-text-secondary mb-6">Thank you for your premium purchase.</p>
 
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 w-full backdrop-blur-sm">
-                            <p className="text-sm text-text-muted mb-1 uppercase tracking-widest font-bold">Order ID</p>
-                            <p className="font-mono text-xl text-white tracking-widest">{orderId}</p>
+                        <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-2xl p-6 mb-6 w-full backdrop-blur-sm relative overflow-hidden shadow-[0_0_30px_rgba(255,107,0,0.1)]">
+                            <div className="absolute -right-4 -top-4 opacity-10">
+                                <KeyRound size={100} />
+                            </div>
+                            <p className="text-xs text-brand-primary mb-1 uppercase tracking-widest font-bold flex items-center justify-center gap-1.5" style={{ color: 'var(--color-brand-primary)' }}>
+                                <KeyRound size={14} /> Delivery Verification OTP
+                            </p>
+                            <p className="font-mono text-4xl font-black text-white tracking-[0.2em] my-3">{deliveryOtp}</p>
+                            <p className="text-xs text-text-secondary leading-relaxed">
+                                Share this one-time password with the delivery agent to accept your items. Do not share it beforehand.
+                            </p>
                         </div>
                         
-                        <div className="bg-emerald-500/10 border-l-4 border-emerald-500 p-4 rounded-r-xl rounded-l-sm w-full text-left mb-8">
-                            <p className="font-bold text-emerald-400 mb-1 flex items-center gap-2">
-                                <ShieldCheck size={18} />
-                                Secure Escrow Active
+                        <div className="bg-white/5 border border-white/10 p-4 rounded-xl w-full text-left mb-8">
+                            <p className="font-bold text-white mb-1 flex items-center gap-2">
+                                <ShieldCheck size={18} className="text-emerald-400" />
+                                {paymentMethod === 'cod' ? 'Cash on Delivery' : 'Secure Escrow Active'}
                             </p>
-                            <p className="text-sm text-emerald-300/80 leading-relaxed">
-                                You've paid the 50% deposit. The remaining balance is secured and only due upon verified delivery of your items.
+                            <p className="text-sm text-text-secondary leading-relaxed">
+                                {paymentMethod === 'cod' 
+                                    ? `Please keep ${formatCurrency(totalInDisplayCurrency, displayCurrency)} cash ready for delivery.`
+                                    : "You've paid the 50% deposit. The remaining balance is secured and only due upon verified delivery of your items."}
                             </p>
                         </div>
 
@@ -106,7 +119,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, c
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-bg-dark rounded-3xl border border-white/10 shadow-2xl overflow-hidden glass-panel z-10"
+                        className="relative w-full max-w-3xl bg-bg-dark rounded-3xl border border-white/10 shadow-2xl overflow-hidden glass-panel z-10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6 border-b border-white/5 flex justify-between items-center glass-nav sticky top-0 z-20">
@@ -143,34 +156,74 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, c
                                             <span className="font-mono">{formatCurrency(totalInDisplayCurrency, displayCurrency)}</span>
                                         </div>
                                         <div className="flex justify-between text-lg font-bold text-white pt-3 border-t border-white/10">
-                                            <span>Deposit Required (50%)</span>
-                                            <span className="font-mono text-brand-primary">{formatCurrency(depositInDisplayCurrency, displayCurrency)}</span>
+                                            <span>Total Amount</span>
+                                            <span className="font-mono text-brand-primary">{formatCurrency(totalInDisplayCurrency, displayCurrency)}</span>
                                         </div>
-                                        <p className="text-xs text-text-muted/60 mt-2 text-center">Remaining 50% due on delivery.</p>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest mb-4">Payment securely via App</h3>
-                                    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 rounded-3xl border border-white/10 backdrop-blur-md">
-                                        <div className="p-4 bg-white rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.1)] relative group">
-                                            <div className="absolute inset-0 bg-brand-primary/20 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                                            <img
-                                                src={qrCodeUrl}
-                                                alt="Payment QR Code"
-                                                className="w-48 h-48 rounded-xl block relative z-10"
-                                            />
-                                        </div>
-                                        <p className="mt-6 text-sm text-text-secondary text-center leading-relaxed">
-                                            Scan using your favorite payment app to securely authorize the deposit.
-                                        </p>
+                                    <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest mb-4">Payment Method</h3>
+                                    
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentMethod('cod')}
+                                            className={`p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 ${
+                                                paymentMethod === 'cod' 
+                                                ? 'bg-brand-primary/20 border-brand-primary text-white shadow-[0_0_15px_rgba(255,107,0,0.15)]' 
+                                                : 'bg-white/5 border-white/10 text-text-muted hover:bg-white/10 hover:text-text-secondary'
+                                            }`}
+                                        >
+                                            <Banknote size={32} className={paymentMethod === 'cod' ? 'text-brand-primary' : ''} style={paymentMethod === 'cod' ? { color: 'var(--color-brand-primary)' } : {}} />
+                                            <span className="font-bold text-sm">Cash on Delivery</span>
+                                        </button>
+                                        
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentMethod('app_deposit')}
+                                            className={`p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3 ${
+                                                paymentMethod === 'app_deposit' 
+                                                ? 'bg-brand-primary/20 border-brand-primary text-white shadow-[0_0_15px_rgba(255,107,0,0.15)]' 
+                                                : 'bg-white/5 border-white/10 text-text-muted hover:bg-white/10 hover:text-text-secondary'
+                                            }`}
+                                        >
+                                            <QrCode size={32} className={paymentMethod === 'app_deposit' ? 'text-brand-primary' : ''} style={paymentMethod === 'app_deposit' ? { color: 'var(--color-brand-primary)' } : {}} />
+                                            <span className="font-bold text-sm">Pay Deposit via App</span>
+                                        </button>
                                     </div>
+
+                                    {paymentMethod === 'app_deposit' ? (
+                                        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-black/40 rounded-3xl border border-white/10 backdrop-blur-md">
+                                            <div className="p-4 bg-white rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.1)] relative group mb-4">
+                                                <div className="absolute inset-0 bg-brand-primary/20 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                                <img
+                                                    src={qrCodeUrl}
+                                                    alt="Payment QR Code"
+                                                    className="w-32 h-32 md:w-40 md:h-40 rounded-xl block relative z-10"
+                                                />
+                                            </div>
+                                            <p className="text-sm text-text-secondary text-center leading-relaxed">
+                                                Scan using your favorite payment app to securely authorize the <span className="text-white font-mono">{formatCurrency(depositInDisplayCurrency, displayCurrency)}</span> (50%) deposit.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-black/40 rounded-3xl border border-white/10 backdrop-blur-md text-center">
+                                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                                                <Banknote size={24} className="text-text-muted" />
+                                            </div>
+                                            <h4 className="text-white font-bold mb-2 text-lg">Cash on Delivery Selected</h4>
+                                            <p className="text-sm text-text-secondary leading-relaxed">
+                                                You will receive a 6-digit OTP upon confirmation. Share the OTP with the delivery agent and pay <span className="text-white font-mono">{formatCurrency(totalInDisplayCurrency, displayCurrency)}</span> in cash.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="p-6 border-t border-white/10 bg-bg-darker/50">
                                 <button type="submit" className="w-full px-4 py-4 bg-brand-primary border border-transparent rounded-full shadow-[0_0_20px_rgba(255,107,0,0.3)] text-lg font-bold text-white hover:bg-opacity-90 hover:shadow-[0_0_30px_rgba(255,107,0,0.5)] focus:outline-none transition-all glow-orange" style={{ backgroundColor: 'var(--color-brand-primary)' }}>
-                                    I Have Completed The Payment
+                                    {paymentMethod === 'cod' ? 'Confirm Order' : 'I Have Completed The Deposit payment'}
                                 </button>
                             </div>
                         </form>
