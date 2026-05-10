@@ -54,7 +54,7 @@ Your (Seller) Reply:`;
             contents: prompt,
         });
 
-        return response.text;
+        return response.text ?? "I'm not sure what to say, but I'm here to help!";
     } catch (error) {
         console.error("Error calling Gemini API for chat reply:", error);
         return "Sorry, I'm having a bit of trouble connecting right now. Please try again in a moment.";

@@ -44,6 +44,29 @@ const MOTO_PARTS = ['Exhaust', 'Helmet', 'Master Cylinder', 'Chain Kit', 'Sprock
 const BIKE_BRANDS = ['Shimano', 'SRAM', 'Campagnolo', 'Specialized', 'Trek', 'Giant', 'Canyon', 'Pinarello', 'Cannondale', 'Scott', 'Bianchi', 'Orbea', 'Santa Cruz', 'Merida', 'BMC', 'Cervelo', 'Colnago', 'Ridley', 'Fuji', 'Marin'];
 const BIKE_PARTS = ['Groupset', 'Wheelset', 'Carbon Frame', 'Handlebar', 'Seatpost', 'Saddle', 'Pedal', 'Tire', 'Brake Set', 'Derailleur', 'Chain', 'Cassette', 'Crankset', 'Fork', 'Stem', 'Bottom Bracket', 'Headset', 'Brake Rotors', 'Thru Axle', 'Bar Tape', 'Bottle Cage', 'Mudguards', 'Pannier Rack', 'Computer Mount', 'Lights Set'];
 
+const MOCK_REVIEWERS = ['John D.', 'Sarah W.', 'Mike T.', 'Emily R.', 'Chris P.', 'Alex K.', 'Jordan L.', 'Sam F.', 'Taylor B.', 'Morgan H.'];
+const MOCK_COMMENTS_POSITIVE = ['Great product! Fits perfectly.', 'Fast shipping, item exactly as described.', 'Highly recommend this seller. Excellent condition.', 'Works like a charm. Very satisfied.', 'Top notch quality. Would buy again.'];
+const MOCK_COMMENTS_MIXED = ['Okay item, had some scratches that were not mentioned.', 'Decent for the price, but took a while to arrive.', 'It works, but installation was a bit tricky.', 'Average quality. Does the job.'];
+
+const generateFakeReviews = (): Review[] => {
+    const numReviews = Math.floor(Math.random() * 4) + 1; // 1 to 4 reviews
+    const reviews: Review[] = [];
+    for (let i = 0; i < numReviews; i++) {
+        const isPositive = Math.random() > 0.3; // 70% chance of positive review
+        const commentList = isPositive ? MOCK_COMMENTS_POSITIVE : MOCK_COMMENTS_MIXED;
+        const rating = isPositive ? (Math.floor(Math.random() * 2) + 4) : (Math.floor(Math.random() * 2) + 2); // 4-5 or 2-3
+        
+        reviews.push({
+            id: Math.floor(Math.random() * 1000000),
+            author: MOCK_REVIEWERS[Math.floor(Math.random() * MOCK_REVIEWERS.length)],
+            rating,
+            comment: commentList[Math.floor(Math.random() * commentList.length)],
+            date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString()
+        });
+    }
+    return reviews;
+};
+
 const generateProducts = () => {
     const products: Product[] = [];
     let id = 1;
@@ -231,7 +254,8 @@ const generateProducts = () => {
             currency: 'USD',
             sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
             sellerPhoneNumber: generateRandomPhoneNumber(),
-            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)]
+            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
+            reviews: generateFakeReviews()
         });
     }
 
@@ -255,7 +279,8 @@ const generateProducts = () => {
             currency: 'USD',
             sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
             sellerPhoneNumber: generateRandomPhoneNumber(),
-            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)]
+            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
+            reviews: generateFakeReviews()
         });
     }
 
@@ -279,7 +304,8 @@ const generateProducts = () => {
             currency: 'USD',
             sellerId: Math.random() > 0.3 ? 'otherUser' : 'currentUser',
             sellerPhoneNumber: generateRandomPhoneNumber(),
-            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)]
+            sellerLocation: mockLocations[Math.floor(Math.random() * mockLocations.length)],
+            reviews: generateFakeReviews()
         });
     }
 
