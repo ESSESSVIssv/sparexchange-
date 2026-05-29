@@ -37,7 +37,7 @@ export const ChatListModal: React.FC<ChatListModalProps> = ({ isOpen, onClose, c
                                 <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20">
                                     <MessageSquare size={20} className="text-brand-primary" style={{ color: 'var(--color-brand-primary)' }} />
                                 </div>
-                                <h2 className="text-2xl font-bold text-white font-display">Secure Comms</h2>
+                                <h2 className="text-2xl font-bold text-white font-display">Secure Communications</h2>
                             </div>
                             <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-text-muted hover:text-white transition-colors">
                                 <X size={24} />
@@ -50,7 +50,7 @@ export const ChatListModal: React.FC<ChatListModalProps> = ({ isOpen, onClose, c
                                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5">
                                         <MessageSquare size={32} className="text-text-muted" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-white mb-2 font-display">No comms established</h3>
+                                    <h3 className="text-xl font-bold text-white mb-2 font-display">No communications established</h3>
                                     <p className="text-text-secondary text-sm">Initiate secure communications from an asset's profile page.</p>
                                 </div>
                             ) : (

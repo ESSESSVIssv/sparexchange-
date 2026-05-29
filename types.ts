@@ -67,6 +67,7 @@ export interface Product {
   reviews?: Review[];
   sellerPhoneNumber: string;
   sellerLocation: Address;
+  isVerified?: boolean;
 }
 
 export interface ToastMessage {
