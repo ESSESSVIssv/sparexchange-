@@ -14,7 +14,7 @@ export const ChatListModal: React.FC<ChatListModalProps> = ({ isOpen, onClose, c
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-40 flex items-start justify-end sm:p-4 pointer-events-auto">
+                <div className="fixed inset-0 z-[60] flex items-start justify-end sm:p-4 pointer-events-auto">
                     {/* Overlay */}
                     <motion.div 
                         initial={{ opacity: 0 }}
