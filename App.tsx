@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, ShieldCheck } from "lucide-react";
 import { Header } from "./components/Header";
@@ -35,7 +35,7 @@ import { Toast } from "./components/Toast";
 import { OrdersPage } from "./components/OrdersPage";
 import { ShippingPage } from "./components/ShippingPage";
 import { auth } from "./firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged, User } from "firebase/auth";
 
 const generateRandomPhoneNumber = () => {
   const countryCode = Math.floor(Math.random() * 90) + 10;
@@ -842,6 +842,20 @@ const INITIAL_PRODUCTS: Product[] = generateProducts();
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // We set the user details, but we DO NOT auto-set isAuthenticated to true here 
+        //, so the user can still see the auth screen if they refresh.
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+    return unsubscribe;
+  }, []);
   const [isSellModalOpen, setIsSellModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -1270,6 +1284,7 @@ const App: React.FC = () => {
                 products={sellerProducts}
                 orders={orders}
                 onBack={() => setCurrentPage("marketplace")}
+                user={currentUser}
               />
             )}
           </motion.main>
@@ -1287,6 +1302,7 @@ const App: React.FC = () => {
                 orders={orders}
                 wishlist={wishlistItems}
                 onBack={() => setCurrentPage("marketplace")}
+                user={currentUser}
               />
             </motion.div>
           );
@@ -1303,6 +1319,7 @@ const App: React.FC = () => {
                 products={sellerProducts}
                 orders={orders}
                 onBack={() => setCurrentPage("marketplace")}
+                user={currentUser}
               />
             </motion.div>
           );

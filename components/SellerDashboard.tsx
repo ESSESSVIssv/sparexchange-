@@ -28,6 +28,7 @@ interface SellerDashboardProps {
   products: Product[];
   orders: Order[];
   onBack: () => void;
+  user?: any;
 }
 
 type TabType =
@@ -278,8 +279,12 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
         return (
           <div className="space-y-6 max-w-3xl">
             <div className="flex items-start gap-6 p-6 rounded-2xl bg-white/5 border border-white/10">
-              <div className="w-24 h-24 rounded-2xl bg-brand-primary flex items-center justify-center border-4 border-bg-dark shrink-0">
-                <Store size={40} className="text-white" />
+              <div className="w-24 h-24 rounded-2xl flex items-center justify-center border-4 border-bg-dark shrink-0 overflow-hidden bg-brand-primary">
+                {user?.photoURL ? (
+                  <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <Store size={40} className="text-white" />
+                )}
               </div>
               <div className="flex-grow">
                 <div className="flex justify-between">
@@ -288,7 +293,8 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                       AutoParts Pro{" "}
                       <ShieldCheck size={20} className="text-brand-primary" />
                     </h3>
-                    <p className="text-text-secondary">Owner: Jane Smith</p>
+                    <p className="text-text-secondary">Owner: {user?.displayName || "Jane Smith"}</p>
+                    <p className="text-text-muted text-sm">{user?.email || "jane@example.com"}</p>
                   </div>
                   <button className="border border-white/20 text-sm font-bold px-4 py-2 rounded-lg hover:bg-white/5">
                     Edit Profile
@@ -305,7 +311,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
                     <p className="text-xs text-text-muted uppercase tracking-widest">
                       Contact
                     </p>
-                    <p className="text-sm">+1 (555) 019-9122</p>
+                    <p className="text-sm">{user?.phoneNumber || "+1 (555) 019-9122"}</p>
                   </div>
                 </div>
               </div>

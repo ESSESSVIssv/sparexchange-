@@ -8,6 +8,7 @@ import {
   Package,
   Plus,
   LayoutDashboard,
+  LogOut,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -151,9 +152,11 @@ export const Header: React.FC<HeaderProps> = ({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onLogout}
-            className="text-text-secondary hover:text-rose-400 font-semibold px-4 py-2.5 rounded-full transition-all border border-white/5 hover:border-rose-400/30 text-sm hidden sm:block"
+            className="text-text-secondary hover:text-rose-400 font-semibold p-2 sm:px-4 sm:py-2.5 rounded-full transition-all sm:border sm:border-white/5 hover:bg-white/5 sm:hover:bg-transparent sm:hover:border-rose-400/30 text-sm flex items-center justify-center"
+            aria-label="Logout"
           >
-            Logout
+            <span className="hidden sm:inline">Logout</span>
+            <LogOut size={20} className="sm:hidden" />
           </motion.button>
           
           <motion.button

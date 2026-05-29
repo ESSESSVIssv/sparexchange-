@@ -17,6 +17,7 @@ interface CustomerDashboardProps {
   orders: Order[];
   wishlist: Product[];
   onBack: () => void;
+  user?: any;
 }
 
 type TabType =
@@ -31,13 +32,23 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   orders,
   wishlist,
   onBack,
+  user,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [profileName, setProfileName] = useState("John Doe");
-  const [profileEmail, setProfileEmail] = useState("john.doe@example.com");
-  const [profilePhone, setProfilePhone] = useState("+1 555-0199");
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState(user?.displayName || "John Doe");
+  const [profileEmail, setProfileEmail] = useState(user?.email || "john.doe@example.com");
+  const [profilePhone, setProfilePhone] = useState(user?.phoneNumber || "+1 555-0199");
+  const [profileImage, setProfileImage] = useState<string | null>(user?.photoURL || null);
+
+  React.useEffect(() => {
+    if (user) {
+      if (user.displayName) setProfileName(user.displayName);
+      if (user.email) setProfileEmail(user.email);
+      if (user.phoneNumber) setProfilePhone(user.phoneNumber);
+      if (user.photoURL) setProfileImage(user.photoURL);
+    }
+  }, [user]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

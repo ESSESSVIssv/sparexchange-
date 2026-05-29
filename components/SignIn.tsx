@@ -36,6 +36,7 @@ export const SignIn: React.FC<SignInProps> = ({ onSignIn, role }) => {
     
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showMockLogin, setShowMockLogin] = useState(false);
 
     useEffect(() => {
         try {
@@ -55,17 +56,6 @@ export const SignIn: React.FC<SignInProps> = ({ onSignIn, role }) => {
         }
     }, [authMethod]);
 
-    // Handle authentication state change - removed auto-redirect so UI can be seen
-    // If you want auto-redirect, you can add it back, but this ensures the auth page is visible for the demo.
-    useEffect(() => {
-        // Just keeping the auth state listener for eventual token refresh or global state, 
-        // but removing automatic onSignIn() trigger to allow viewing the beautiful UI.
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            // if (user) { onSignIn(); } // Disabled for UI demonstration purposes
-        });
-        return unsubscribe;
-    }, [onSignIn]);
-
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -79,6 +69,7 @@ export const SignIn: React.FC<SignInProps> = ({ onSignIn, role }) => {
             onSignIn(); // Proceed to app
         } catch (err: any) {
             setError(err.message);
+            if (err.code === 'auth/operation-not-allowed') setShowMockLogin(true);
         } finally {
             setLoading(false);
         }
@@ -89,10 +80,12 @@ export const SignIn: React.FC<SignInProps> = ({ onSignIn, role }) => {
         setLoading(true);
         try {
             const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
             await signInWithPopup(auth, provider);
             onSignIn(); // Proceed to app
         } catch (err: any) {
             setError(err.message);
+            if (err.code === 'auth/operation-not-allowed') setShowMockLogin(true);
         } finally {
             setLoading(false);
         }
@@ -155,7 +148,15 @@ export const SignIn: React.FC<SignInProps> = ({ onSignIn, role }) => {
                 
                 {error && (
                     <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-sm text-center">
-                        {error}
+                        <p>{error}</p>
+                        {showMockLogin && (
+                            <button
+                                onClick={onSignIn}
+                                className="mt-2 text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                            >
+                                Provider not configured in Firebase? Continue in Demo Mode instead
+                            </button>
+                        )}
                     </div>
                 )}
 
