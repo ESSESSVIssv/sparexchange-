@@ -841,7 +841,7 @@ const INITIAL_PRODUCTS: Product[] = generateProducts();
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -1197,10 +1197,6 @@ const App: React.FC = () => {
 
   if (!role) {
     return <RoleSelection onSelectRole={handleSelectRole} />;
-  }
-
-  if (!isAuthenticated) {
-    return <SignIn onSignIn={handleSignIn} role={role} />;
   }
 
   const renderPage = () => {

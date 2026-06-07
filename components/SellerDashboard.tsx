@@ -59,6 +59,7 @@ export const SellerDashboard: React.FC<SellerDashboardProps> = ({
   products,
   orders,
   onBack,
+  user,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("analytics");
 
